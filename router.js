@@ -5,7 +5,6 @@ const memberController = require("./controllers/memberController")
 
 // Router orqali turli xil routerlarni shakillantiramiz
 // memberga dahldor routerlar
-router.get("/", memberController.home);
 router.post("/signup", memberController.signup);
 router.post("/login", memberController.login);
 router.get("/logout", memberController.logout);

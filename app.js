@@ -21,6 +21,7 @@ app.set("view engine", "ejs");
 
 // ROUTERLAR qaysi API bilan kelgan Addreesni qayerga borishini xal qiladi
 // 4. Routing code 
-app.use("/",  router)
+app.use("/",  router);          // 
+// app.use("/resto", router_bssr); // ananaviy 
 
 module.exports = app;
