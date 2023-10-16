@@ -8,10 +8,12 @@ try{
     const data = req.body;
     const member = new Member();
     const new_member = await member.signupData(data);
-    
-    res.send('done');
+
+    res.json({state: 'succeed', data: new_member});
+    res
 }catch(err){
     console.log(`ERROR, cont/signup, ${err.message}`);
+    res.json({state: 'fail', message: err.message});
 }
 };
 
