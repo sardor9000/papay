@@ -3,6 +3,11 @@ const express = require("express");
 const router = express.Router(); // Expressni ichidsn routerni olib chiqdik
 const memberController = require("./controllers/memberController")
 
+
+
+/* *************************
+*            REST API       *
+****************************/
 // Router orqali turli xil routerlarni shakillantiramiz
 // memberga dahldor routerlar
 router.post("/signup", memberController.signup);

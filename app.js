@@ -1,7 +1,8 @@
-console.log("web server ishlayapti");
+console.log("web serverni boshlash");
 const express = require("express");
 const app = express();
 const router = require("./router.js");
+const router_bssr = require("./router_bssr");
 
 
 
@@ -21,7 +22,7 @@ app.set("view engine", "ejs");
 
 // ROUTERLAR qaysi API bilan kelgan Addreesni qayerga borishini xal qiladi
 // 4. Routing code 
+app.use("/resto", router_bssr); // ananaviy 
 app.use("/",  router);          // 
-// app.use("/resto", router_bssr); // ananaviy 
 
-module.exports = app;
+module.exports = app; 
