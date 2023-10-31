@@ -3,6 +3,7 @@ const MemberModel = require("../schema/member.model");
 const Definer = require("../lib/mistake");
 const assert = require("assert");
 const bcrypt = require('bcryptjs');
+const { log } = require("console");
 
 
 class Member {
