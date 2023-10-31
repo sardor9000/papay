@@ -5,7 +5,6 @@ const router = require("./router.js");
 const router_bssr = require("./router_bssr");
 
 let session = require("express-session");
-const GridFSBucket = require("mongodb/lib/gridfs-stream/index.js");
 const MongoDBStore = require("connect-mongodb-session")(session);
 const store = new MongoDBStore({
     uri: process.env.MONGO_URL,

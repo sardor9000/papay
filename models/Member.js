@@ -3,8 +3,6 @@ const MemberModel = require("../schema/member.model");
 const Definer = require("../lib/mistake");
 const assert = require("assert");
 const bcrypt = require('bcryptjs');
-const { log } = require("console");
-
 
 class Member {
     constructor(){
@@ -40,8 +38,8 @@ class Member {
         .findOne(
             {mb_nick: input.mb_nick}, {mb_nick: 1, mb_password: 1})
             .exec();
+            console.log('member:', member);
             assert.ok(member, Definer.auth_err3);
-
 
             const isMatch = await bcrypt.compare(
                 input.mb_password,
