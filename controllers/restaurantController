@@ -3,7 +3,7 @@ const Member = require("../models/Member");
 const Product = require("../models/Product");
 const assert = require("assert");
 const Restaurant = require("../models/Restaurant");
-const { restart } = require("nodemon");
+// const { restart } = require("nodemon");
 
 let restaurantController = module.exports;
 
@@ -152,15 +152,30 @@ restaurantController.validateAdmin = (req, res, next) => {
 restaurantController.getAllRestaurants = async (req, res) => {
     try {
         console.log("GET cont/getAllRestaurants");
-        // todo: hamma restaturantlarni chaqiramiz
+        // todo: hamma restaurantlarni chaqiramiz
 
         const restaurant = new Restaurant();
         const restaurants_data = await restaurant.getAllRestaurantsData();
         console.log(restaurants_data);
-        res.render("all-restaurants", {restaurants_data: restaurants_data});
+        res.render("all-restaurants", { restaurants_data: restaurants_data });
 
     } catch (err) {
         console.log(`ERROR, cont/getAllRestaurants, ${err.message}`);
-        res.json({state: 'fail', message: err.message});
+        res.json({ state: 'fail', message: err.message });
+    }
+};
+
+
+restaurantController.updateRestaurantByAdmin = async (req, res) => {
+    try {
+        console.log("GET cont/updateRestaurantByAdmin");
+        const restaurant = new Restaurant();
+        const result = await restaurant.updateRestaurantByAdminData(req.body);
+        console.log(result);
+
+        await res.json({ state: "success", data: result })
+    } catch (err) {
+        console.log(`ERROR, cont/updateRestaurantByAdmin, ${err.message}`);
+        res.json({ state: 'fail', message: err.message });
     }
 }
