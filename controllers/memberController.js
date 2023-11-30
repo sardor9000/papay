@@ -38,7 +38,10 @@ memberController.login = async (req, res) =>{
         const token = memberController.createToken(result);
         console.log("token::",token);
 
-        res.cookie("access_token", token, { maxAge: 6 * 3600 * 1000, httpOnly: true, });
+        res.cookie("access_token", token, {
+            maxAge: 6 * 3600 * 1000,
+            httpOnly: true,
+        });
 
 
         res.json({state: 'succeed', data: result});
@@ -49,7 +52,7 @@ memberController.login = async (req, res) =>{
 }
 
 memberController.logout = (req, res) =>{
-    console.log("GET cont.logout");
+    console.log("GET cont/logout");
     res.send("logout sahifadasiz")
 }
 
@@ -57,8 +60,9 @@ memberController.createToken = (result) => {
     try {
         const upload_data = {
             _id: result._id,
-            mb_nick: result._id,
-            my_type: result.mb_type
+            mb_nick: result.mb_nick,
+            my_type: result.mb_type,
+            
         };
 
         const token = jwt.sign(
@@ -70,5 +74,19 @@ memberController.createToken = (result) => {
         return token
     } catch (err) {
         throw err
+    }
+}
+
+memberController.checkMyAuthentication = (req, res) => {
+    try {
+        console.log("GET cont/checkMyAuthentication")
+        let token = req.cookies["access_token"];
+
+        const member = token ? jwt.verify(token, process.env.SECRET_TOKEN) : null
+        assert.ok(member, Definer.auth_err2 )
+        res.json({state: 'succeed', data: member});
+
+    } catch (err) {
+        
     }
 }
