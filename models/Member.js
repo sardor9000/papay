@@ -1,9 +1,10 @@
 // Modullar classlar bilan xosil boladi
-const MemberModel = require("../schema/member.model");
-const Definer = require("../lib/mistake");
 const assert = require("assert");
+const Definer = require("../lib/mistake");
 const bcrypt = require('bcryptjs');
 const { shapeIntoMongooseObjectId } = require("../lib/config");
+const View = require("./View");
+const MemberModel = require("../schema/member.model");
 
 class Member {
     constructor(){
@@ -68,8 +69,9 @@ class Member {
 
             if (member) {
                 // condition if not seen before
-            }
+                await this.viewChosenItemByMember(member, id, "member");
 
+            }
             const result = await this.memberModel
                 .aggregate([{
                     $match: { _id: id, mb_status: "ACTIVE" }},
@@ -82,6 +84,34 @@ class Member {
        
         }catch(err){
          throw err;
+        }
+    }
+
+
+    async viewChosenItemByMember(member, view_ref_id, group_type) {
+        try {
+
+            view_ref_id = shapeIntoMongooseObjectId(view_ref_id);
+            const mb_id = shapeIntoMongooseObjectId(member._id);
+            const view = new View(mb_id);
+
+            // validation needed
+            const isValid = await view.validateChosenTarget(view_ref_id, group_type);
+            assert.ok(isValid, Definer.general_err2);
+
+            // logged user has seen target before
+            const doesExist = await view.checkViewExistance(view_ref_id);
+            console.log('doesExit', doesExist);
+
+            if (!doesExist) {
+                const result = await view.insertMemberView(view_ref_id, group_type);
+                assert.ok(result, Definer.general_err1);
+            }
+
+            return true;
+
+        } catch (err) {
+            throw err;
         }
     }
 }
