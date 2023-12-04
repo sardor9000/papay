@@ -70,11 +70,18 @@ const productSchema = new mongoose.Schema({
         required: false,
         default: 0
     },
+
+    product_views: {
+        type: Number,
+        required: false,
+        default: 0,
+    },
+    
     restaurant_mb_id: {
         type: Schema.Types.ObjectId,
         ref: "Member",
         required: false
-    }
+    },
 
 }, {timestamps: true});  // createdAt, updatedAt
 
