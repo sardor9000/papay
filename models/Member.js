@@ -12,9 +12,12 @@ class Member {
     }
 
     async signupData(input) {
-        try{
-         const salt = await bcrypt.genSalt();
-         input.mb_password = await bcrypt.hash(input.mb_password, salt)
+        try {
+            // passwordni jibrish qilib o'zgartirdik
+            const salt = await bcrypt.genSalt();
+            input.mb_password = await bcrypt.hash(input.mb_password, salt)
+
+            // schema modeldan instance olib uning save methodi orqli databesga saqladik
             const new_member = new this.memberModel(input); 
 
             let result;
@@ -62,7 +65,8 @@ class Member {
 
 
     async getChosenMemberData(member, id) {
-        try{
+        try {
+            // string kelgan malumotni objectga tenglaymiz
             id = shapeIntoMongooseObjectId(id);
 
             console.log("member::", member);
@@ -72,7 +76,8 @@ class Member {
                 await this.viewChosenItemByMember(member, id, "member");
 
             }
-            const result = await this.memberModel
+            const result = await this.memberModel 
+                // pipeline 
                 .aggregate([{
                     $match: { _id: id, mb_status: "ACTIVE" }},
                     { $unset: "mb_password" }

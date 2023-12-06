@@ -10,15 +10,12 @@ try{
     console.log('POST: cont/signup');
     const data = req.body,
     member = new Member(),
-        new_member = await member.signupData(data);
+    new_member = await member.signupData(data);
     
-        const token = memberController.createToken(new_member);
+    const token = memberController.createToken(new_member);
 
-        res.cookie("access_token", token, { maxAge: 6 * 3600 * 1000, httpOnly: true, });
-
-
-
-    res.json({state: 'succeed', data: new_member});
+    res.cookie("access_token", token, { maxAge: 6 * 3600 * 1000, httpOnly: true, });
+    res.json({state: 'success', data: new_member});
 }catch(err){
     console.log(`ERROR, cont/signup, ${err.message}`);
     res.json({state: 'fail', message: err.message});
@@ -42,7 +39,7 @@ memberController.login = async (req, res) =>{
         });
 
 
-        res.json({state: 'succeed', data: result});
+        res.json({state: 'success', data: result});
     }catch(err){
         console.log(`ERROR, cont/login, ${err.message}`);
         res.json({state: 'fail', message: err.message});
@@ -52,7 +49,7 @@ memberController.login = async (req, res) =>{
 memberController.logout = (req, res) =>{
     console.log("GET cont/logout");
     res.cookie('access_token', null, { maxAge: 0, httpOnly: true });
-    res.json({state: 'succeed', data: 'logout successfully!'});
+    res.json({state: 'success', data: 'logout successfully!'});
 }
 
 memberController.createToken = (result) => {
@@ -79,11 +76,13 @@ memberController.createToken = (result) => {
 memberController.checkMyAuthentication = (req, res) => {
     try {
         console.log("GET cont/checkMyAuthentication")
+        // cookies ichidan access_token ni ajratib olamiz
         let token = req.cookies["access_token"];
-
+        
+        // buyerda jibrishni decode qilamiz
         const member = token ? jwt.verify(token, process.env.SECRET_TOKEN) : null
         assert.ok(member, Definer.auth_err2 )
-        res.json({state: 'succeed', data: member});
+        res.json({state: 'success', data: member});
 
     } catch (err) {
         throw err
@@ -96,8 +95,9 @@ memberController.getChosenMember = async (req, res) => {
         const id = req.params.id;
 
         const member = new Member();
+        // kim koryapti va kimni koryapti  men => boshqani
         const result = await member.getChosenMemberData(req.member, id);
-        res.json({ state: "succeed", data: result });
+        res.json({ state: "success", data: result });
         
     } catch (err) {
         console.log(`ERROR, cont/getChosenMember, ${err.message}`);
@@ -107,9 +107,11 @@ memberController.getChosenMember = async (req, res) => {
 
 
 // Token orqali Authentication xosil qilyapmiz
+// login bolgan va bolmagan user ham keyingi bosqichga otkazib yuboramiz
 memberController.retrieveAuthMember = (req, res, next) => {
     try {
         const token = req.cookies["access_token"];
+        // decoding qilamiz
         req.member = token ? jwt.verify(token, process.env.SECRET_TOKEN) : null
         next();
     } catch (er) {

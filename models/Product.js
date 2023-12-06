@@ -14,16 +14,19 @@ class Product {
         try {
             const auth_mb_id = shapeIntoMongooseObjectId(member?._id);
 
+            // aggregationga kerak boladigan matching object yasaymiz
             let match = { product_status: "PROCESS" };
             if (data.restaurant_mb_id) {
                 match['restaurant_mb_id'] = shapeIntoMongooseObjectId(
-                data.restaurant_mb_id);
+                    data.restaurant_mb_id
+                );
+                match['product_collection'] = data.product_collection;
             };
-            match['product_collection'] = data.product_collection;
+            
             
             const sort = data.order === 'product_price'
-                ? { [data.order]: 1 }
-                : { [data.order]: -1 }
+                ? { [data.order]: 1 } // pastdan tepaga
+                : { [data.order]: -1 } // tepadan pastga 
                 
         
 
@@ -31,8 +34,8 @@ class Product {
                 .aggregate([
                     { $match: match },
                     { $sort: sort },
-                    { $skip: (data.page * 1 -1) * data.limit },
-                    {$limit: data.limit * 1 },
+                    { $skip: (data.page * 1 -1) * data.limit }, // 1-pageni oladi 
+                    {$limit: data.limit * 1 },  //
                     // todo: check auth member product likes
                 ])
                 .exec();
@@ -47,14 +50,17 @@ class Product {
         }
     };
 
-
+                            // login bolgan member
     async getChosenProductData(member, id) {
         try {
+            // req ni kim beryapti
             const auth_mb_id = shapeIntoMongooseObjectId(member?._id);
             id = shapeIntoMongooseObjectId(id);
 
             if (member) {
+                // Member service modelni ishlatamiz
                 const member_obj = new Member();
+                                                // kim,  nimani, 
                 member_obj.viewChosenItemByMember(member, id, "product")
             }
 
