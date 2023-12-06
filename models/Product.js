@@ -61,7 +61,7 @@ class Product {
                 // Member service modelni ishlatamiz
                 const member_obj = new Member();
                                                 // kim,  nimani, 
-                member_obj.viewChosenItemByMember(member, id, "product")
+               await member_obj.viewChosenItemByMember(member, id, "product")
             }
 
             const result = await this.productModel
