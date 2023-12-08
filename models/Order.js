@@ -35,6 +35,8 @@ class Order {
 
             // order items creation
 
+            await this.recordOrderItemsData(order_id, data)
+
             return order_id;
         } catch (err) {
             throw err;
@@ -56,6 +58,42 @@ class Order {
         } catch (err) {
             console.log(err)
             throw new Error(Definer.order_err1)
+        }
+    }
+
+
+    async recordOrderItemsData(order_id, data) {
+        try {
+            const pro_list = data.map(async (item) => {
+                return await this.saveOrderItemsData(item, order_id);
+            });
+
+            const results = await Promise.all(pro_list);
+            console.log("results::", results);
+            return true;
+        } catch (err) {
+            throw err;
+        }
+    }
+
+
+    async saveOrderItemsData(item, order_id) {
+        try {
+            order_id = shapeIntoMongooseObjectId(order_id);
+            item._id = shapeIntoMongooseObjectId(item._id);
+
+            const order_item = new this.OrderItemModel({
+                item_quantity: item['quantity'],
+                item_price: item['price'],
+                order_id: order_id,
+                product_id: item['_id']
+            })
+            const result = await order_item.save();
+            assert.ok(result, Definer.order_err2);
+            return 'inserted'
+        } catch (err) {
+            console.log(err)
+            throw new Definer.order_err2;
         }
     }
 } 
