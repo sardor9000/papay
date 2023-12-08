@@ -79,15 +79,15 @@ class Order {
 
     async saveOrderItemsData(item, order_id) {
         try {
-            order_id = shapeIntoMongooseObjectId(order_id);
+            order_id = shapeIntoMongooseObjectId(order_id),
             item._id = shapeIntoMongooseObjectId(item._id);
 
             const order_item = new this.OrderItemModel({
-                item_quantity: item['quantity'],
-                item_price: item['price'],
+                item_quantity: item["quantity"],
+                item_price: item["price"],
                 order_id: order_id,
-                product_id: item['_id']
-            })
+                product_id: item["_id"],
+            });
             const result = await order_item.save();
             assert.ok(result, Definer.order_err2);
             return 'inserted'
@@ -96,6 +96,44 @@ class Order {
             throw new Definer.order_err2;
         }
     }
+
+    async getMyOrdersData(member, query) {
+        try {
+            const mb_id = shapeIntoMongooseObjectId(member._id),
+                order_status = query.status.toUpperCase(),
+                matches = { mb_id: mb_id, order_status: order_status };
+            
+            const result = await this.OrderModel
+                .aggregate([
+                { $match: matches },
+                { $sort: { createdAt: -1 } },
+                {
+                    $lookup: {
+                        from: 'orderitems',
+                        localField: '_id',
+                        foreignField: 'order_id',
+                        as: 'order_items'
+                },
+                    },
+                    {
+                        $lookup: {
+                            from: 'products',
+                            localField: 'order_items.product_id',
+                            foreignField: '_id',
+                            as: 'product_data',
+                        },
+                    },
+            
+        ])
+        .exec();
+        
+        console.log("result::", result);
+        
+            return result;
+        } catch (err) {
+            
+        }
+    }
 } 
 
-module.exports = Order;3
+module.exports = Order;
