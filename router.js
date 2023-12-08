@@ -4,6 +4,7 @@ const router = express.Router(); // Expressni ichidsn routerni olib chiqdik
 const memberController = require("./controllers/memberController")
 const productController = require("./controllers/productController")
 const restaurantController = require("./controllers/restaurantController")
+const orderController = require("./controllers/orderController")
 
 
 /* *************************
@@ -49,5 +50,12 @@ router.get(
     restaurantController.getChosenRestaurant
 );
 
+
+// Order related routers
+router.post(
+    "/orders/create",
+    memberController.retrieveAuthMember,
+    orderController.createOrder
+);
 
 module.exports = router  // Faylni export qildik
