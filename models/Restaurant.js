@@ -14,30 +14,34 @@ class Restaurant {
     async getRestaurantsData(member, data) {
         try {
             const auth_mb_id = shapeIntoMongooseObjectId(member?._id);
+            // searching hosil qilish uchun object yasaymiz
             let match = { mb_type: "RESTAURANT", mb_status: "ACTIVE" };
             let aggregationQuery = [];
-            data.limit = data["limit"] * 1;
+            data.limit = data["limit"] * 1; // stringni songa aylantiramiz
             data.page = data["page"] * 1;
-
+            
+            // query
             switch (data.order) {
                 case "top":
                     match["mb_top"] = "Y";
                     aggregationQuery.push({ $match: match });
-                    aggregationQuery.push({ $sample: { size: data.limit } });
+                    aggregationQuery.push({ $sample: { size: data.limit } }); // 4ta random tanlaydi
                     break;
                 case "random":
+                    // biror bir restaurantga borganimizda random 8ta chiqadi
                     aggregationQuery.push({ $match: match });
-                    aggregationQuery.push({ $sample: { size: data.limit } });
+                    aggregationQuery.push({ $sample: { size: data.limit } }); // 8ta
                     break;
                 default:
+                    // databesedan xar xirl pointlar orqali sort qilsak boladi
                     aggregationQuery.push({ $match: match });
-                    const sort = { [data.order]: -1 };
+                    const sort = { [data.order]: -1 }; // 
                     aggregationQuery.push({$sort: sort})
                     break;
             }
 
-            aggregationQuery.push({ $skip: (data.page - 1) * data.limit });
-            aggregationQuery.push({ $limit: data.limit });
+            aggregationQuery.push({ $skip: (data.page - 1) * data.limit }); // boshlangich 8tani skip qil
+            aggregationQuery.push({ $limit: data.limit }); // mdb 
             // todo: member liked target
 
             const result = await this.memberModel.aggregate(aggregationQuery).exec();
