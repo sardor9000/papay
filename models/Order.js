@@ -16,7 +16,8 @@ class Order {
         try {
             let order_total_amount = 0, delivery_cost = 0;
             const mb_id = shapeIntoMongooseObjectId(member._id);
-
+            
+            // order total amountni hisblab olish
             data.map(item => {
                 order_total_amount += item['quantity'] * item['price'];
             });
@@ -133,7 +134,29 @@ class Order {
         } catch (err) {
             
         }
+    };
+
+
+    async editChosenOrderData(member, data) {
+        try {
+            const mb_id = shapeIntoMongooseObjectId(member._id),
+                order_id = shapeIntoMongooseObjectId(data.order_id),
+                order_status = data.order_status.toUpperCase();
+            
+            const result = await this.OrderModel.findOneAndUpdate(
+                { mb_id: mb_id, _id: order_id },
+                { order_status: order_status },
+                { runValidators: true, lean: true, returnDocument: "after" }
+            );
+            console.log(result);
+
+            assert.ok(result, Definer.order_err3);
+            return result;
+        } catch (err) {
+            throw err;
+        }
     }
+
 } 
 
 module.exports = Order;
