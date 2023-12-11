@@ -50,7 +50,9 @@ class Community {
                             foreignField: "_id",
                             as: "member_data",
                         }
-                    }
+                    },
+                    { $unwind: "$member_data" }
+                    
                 ])
             .exec();
            assert.ok(mb_id, Definer.article_err2);
