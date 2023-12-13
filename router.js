@@ -89,7 +89,12 @@ router.post(
 router.get(
     "/community/articles",
     memberController.retrieveAuthMember,
-    communityController.getMemberArticles)
+    communityController.getMemberArticles
+);
+
+router.get("/community/target",
+    memberController.retrieveAuthMember,
+    communityController.getArticles);
 
 
 module.exports = router  // Faylni export qildik
