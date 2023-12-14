@@ -65,4 +65,18 @@ communityController.getArticles = async (req, res) => {
         console.log(`ERROR, cont/getArticles, ${err.message}`);
         res.json({ state: 'fail', message: err.message });
     }
+};
+
+communityController.getChosenArticle = async (req, res) => {
+    try {
+        console.log("POST: cont/getChosenArticle");
+        const art_id = req.params.art_id,
+        community = new Community(),
+        result = await community.getChosenArticleData(req.member, art_id)
+
+        res.json({ state: "success", data: result });
+    } catch (err) {
+        console.log(`ERROR, cont/getChosenArticle, ${err.message}`);
+        res.json({ state: 'fail', message: err.message });
+    }
 }

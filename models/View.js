@@ -1,6 +1,7 @@
 const MemberModel = require("../schema/member.model")
 const ProductModel = require("../schema/product.model");
 const ViewModel = require("../schema/view.model");
+const BoArticleModel = require("../schema/bo_article.model")
 
 
 class View {
@@ -8,6 +9,7 @@ class View {
         this.viewModel = ViewModel;
         this.memberModel = MemberModel;
         this.productModel = ProductModel;
+        this.boArticleModel = BoArticleModel;
         this.mb_id = mb_id;
     }
 
@@ -27,12 +29,19 @@ class View {
                         result = await this.productModel
                             .findOne({
                                 _id: view_ref_id,
-                                mb_status: "PROCESS",
+                                product_status: "PROCESS",
+                            })
+                            .exec();
+                    break;
+                    case 'community':
+                        result = await this.boArticleModel
+                            .findOne({
+                                _id: view_ref_id,
+                                art_status: "active",
                             })
                             .exec();
                         break;
             }
-
             return !!result;
         } catch (err) {
             throw err;
@@ -79,6 +88,16 @@ class View {
                                { $inc: { product_views: 1 } }
                            )
                            .exec();
+                    break;
+                
+                    case 'community':
+                        await this.boArticleModel
+                           .findByIdAndUpdate({
+                             _id: view_ref_id,
+                           },
+                               { $inc: { art_views: 1 } }
+                           )
+                           .exec();
                        break;
             }
             return true;
@@ -93,7 +112,7 @@ class View {
             const view = await this.viewModel
                 .findOne({
                     mb_id: this.mb_id,
-                    view_ref_id: view_ref_id
+                    view_ref_id: view_ref_id,
                 })
                 .exec();
             return view ? true : false
