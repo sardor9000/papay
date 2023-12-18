@@ -124,4 +124,11 @@ router.get(
     followController.getMemberFollowings
 );
 
+router.get(
+    "/follow/followers",
+    memberController.retrieveAuthMember,
+    followController.getMemberFollowers
+);
+
+
 module.exports = router  // Faylni export qildik
