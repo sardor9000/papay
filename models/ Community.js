@@ -1,7 +1,7 @@
 // Modullar classlar bilan xosil boladi
 const BoArticleModel = require("../schema/bo_article.model");
 const Definer = require("../lib/mistake");
-const { shapeIntoMongooseObjectId, board_id_enum_list } = require("../lib/config");
+const { shapeIntoMongooseObjectId, board_id_enum_list, lookup_auth_member_liked } = require("../lib/config");
 const assert = require("assert");
 const Member = require("./Member");
 
@@ -33,7 +33,7 @@ class Community {
 
     async getMemberArticlesData(member, mb_id, inquiry) {
         try {
-            const aiuth_mb_id = shapeIntoMongooseObjectId(member?._id);
+            const auth_mb_id = shapeIntoMongooseObjectId(member?._id);
             mb_id = shapeIntoMongooseObjectId(mb_id);
             const page = inquiry['page'] ? inquiry['page'] * 1 : 1;
             const limit = inquiry['limit'] ? inquiry['limit'] * 1 : 5;
@@ -52,7 +52,9 @@ class Community {
                             as: "member_data",
                         }
                     },
-                    { $unwind: "$member_data" }
+                    { $unwind: "$member_data" },
+                lookup_auth_member_liked(auth_mb_id)
+
 
                     // todo: check auth member liked shosen target
                     
@@ -94,8 +96,9 @@ class Community {
                         as: "member_data",
                     }
                 },
-                { $unwind: "$member_data" }
+                { $unwind: "$member_data" },
                 // todo: check auth member liked shosen target
+                lookup_auth_member_liked(auth_mb_id)
 
             ])
                 .exec();

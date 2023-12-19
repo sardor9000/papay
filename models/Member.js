@@ -2,8 +2,11 @@
 const assert = require("assert");
 const Definer = require("../lib/mistake");
 const bcrypt = require('bcryptjs');
-const { shapeIntoMongooseObjectId,
-    lookup_auth_member_following } = require("../lib/config");
+const {
+    shapeIntoMongooseObjectId,
+    lookup_auth_member_following, 
+    lookup_auth_member_liked
+} = require("../lib/config");
 const View = require("./View");
 const Like = require("./like");
 const MemberModel = require("../schema/member.model");
@@ -82,6 +85,7 @@ class Member {
                 // condition if not seen before
                 await this.viewChosenItemByMember(member, id, "member");
                 // todo: check auth member liked the chosen member
+                aggregateQuery.push(lookup_auth_member_liked(auth_mb_id, "members"));
                 aggregateQuery.push(lookup_auth_member_following(auth_mb_id, "members"));
             }
             const result = await this.memberModel 
