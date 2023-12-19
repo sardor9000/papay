@@ -90,7 +90,7 @@ try{
 
     const member = new Member();
     const result = await member.signupData(new_member);
-    assert(result, Definer.auth_err1);
+    assert(result, Definer.mongo_validation_err1);
 
 
     req.session.member = result;
