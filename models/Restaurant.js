@@ -21,7 +21,7 @@ class Restaurant {
             data.page = data["page"] * 1;
             
             // query
-            switch (data.order) {
+            switch (data.order) { 
                 case "top":
                     match["mb_top"] = "Y";
                     aggregationQuery.push({ $match: match });
